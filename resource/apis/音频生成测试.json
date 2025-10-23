@@ -1,0 +1,79 @@
+{
+    "name" : "音效生成",
+    "description": "flux提示词生图",
+    "prompt":{
+  "1": {
+    "inputs": {
+      "enable_teacache": false,
+      "rel_l1_thresh": 0.25
+    },
+    "class_type": "TangoFluxLoader",
+    "_meta": {
+      "title": "TangoFluxLoader"
+    }
+  },
+  "2": {
+    "inputs": {
+      "prompt": "An ancient bell flew out of the crack and landed on the ground with a clang.",
+      "steps": 50,
+      "guidance_scale": 3,
+      "duration": 10,
+      "seed": 843803863223684,
+      "batch_size": 1,
+      "offload_model_to_cpu": false,
+      "model": [
+        "1",
+        0
+      ]
+    },
+    "class_type": "TangoFluxSampler",
+    "_meta": {
+      "title": "TangoFluxSampler"
+    }
+  },
+  "3": {
+    "inputs": {
+      "tile_size": 32,
+      "filename_prefix": "TangoFlux34444",
+      "format": "wav",
+      "save_output": true,
+      "vae": [
+        "1",
+        1
+      ],
+      "latents": [
+        "2",
+        0
+      ]
+    },
+    "class_type": "TangoFluxVAEDecodeAndPlay",
+    "_meta": {
+      "title": "TangoFluxVAEDecodeAndPlay"
+    }
+  },
+  "5": {
+    "inputs": {
+      "filename_prefix": "audio/ComfyUI",
+      "audioUI": "",
+      "audio": [
+        "3",
+        0
+      ]
+    },
+    "class_type": "SaveAudio",
+    "_meta": {
+      "title": "保存音频"
+    }
+  }
+},
+    "comfyui_nodes":[
+        "http://localhost:8000"
+    ],
+    "variables":{
+        "prompt":{ 
+          "path":"2.inputs.prompt",
+          "type":"string",
+          "default":"An ancient bell flew out of the crack and landed on the ground with a clang."}
+    },
+    "token":"sk-43545356788884"
+}

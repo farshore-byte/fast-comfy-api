@@ -1,0 +1,67 @@
+{
+    "name" : "视频保存示例",
+    "description": "视频保存示例",
+    "prompt":{
+  "1": {
+    "inputs": {
+      "video": "#Explore #reels #reelsinstagram #instalike #instadaily.mp4",
+      "force_rate": 0,
+      "custom_width": 0,
+      "custom_height": 0,
+      "frame_load_cap": 0,
+      "skip_first_frames": 0,
+      "select_every_nth": 1,
+      "format": "AnimateDiff"
+    },
+    "class_type": "VHS_LoadVideo",
+    "_meta": {
+      "title": "Load Video (Upload) 🎥🅥🅗🅢"
+    }
+  },
+  "2": {
+    "inputs": {
+      "fps": 30,
+      "images": [
+        "1",
+        0
+      ]
+    },
+    "class_type": "CreateVideo",
+    "_meta": {
+      "title": "创建视频"
+    }
+  },
+  "3": {
+    "inputs": {
+      "filename_prefix": "video/ComfyU",
+      "format": "auto",
+      "codec": "auto",
+      "video-preview": "",
+      "video": [
+        "2",
+        0
+      ]
+    },
+    "class_type": "SaveVideo",
+    "_meta": {
+      "title": "保存视频"
+    }
+  }
+},
+    "comfyui_nodes":[
+        "http://localhost:8000"
+    ],
+    "variables":{
+        "filename_prefix":{
+          "path":"3.inputs.filename_prefix",
+          "type":"string",
+          "default":"video/ComfyU"
+
+        }
+    },
+    "token":"sk-23435653245666"
+}
+
+
+
+

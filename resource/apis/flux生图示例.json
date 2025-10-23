@@ -1,0 +1,203 @@
+{
+    "name" : "flux生图",
+    "description": "flux提示词生图",
+    "prompt":{
+  "736": {
+    "inputs": {
+      "vae_name": "FLUX/flux_vae.safetensors"
+    },
+    "class_type": "VAELoader",
+    "_meta": {
+      "title": "加载VAE"
+    }
+  },
+  "737": {
+    "inputs": {
+      "clip_name1": "t5xxl_fp16.safetensors",
+      "clip_name2": "clip_l.safetensors",
+      "type": "flux",
+      "device": "default"
+    },
+    "class_type": "DualCLIPLoader",
+    "_meta": {
+      "title": "双CLIP加载器"
+    }
+  },
+  "738": {
+    "inputs": {
+      "unet_name": "flux/flux_dev.safetensors",
+      "weight_dtype": "default"
+    },
+    "class_type": "UNETLoader",
+    "_meta": {
+      "title": "UNet加载器"
+    }
+  },
+  "740": {
+    "inputs": {
+      "noise": [
+        "744",
+        0
+      ],
+      "guider": [
+        "800",
+        0
+      ],
+      "sampler": [
+        "741",
+        0
+      ],
+      "sigmas": [
+        "742",
+        0
+      ],
+      "latent_image": [
+        "747",
+        5
+      ]
+    },
+    "class_type": "SamplerCustomAdvanced",
+    "_meta": {
+      "title": "自定义采样器（高级）"
+    }
+  },
+  "741": {
+    "inputs": {
+      "sampler_name": "euler"
+    },
+    "class_type": "KSamplerSelect",
+    "_meta": {
+      "title": "K采样器选择"
+    }
+  },
+  "742": {
+    "inputs": {
+      "scheduler": "normal",
+      "steps": 20,
+      "denoise": 1,
+      "model": [
+        "757",
+        0
+      ]
+    },
+    "class_type": "BasicScheduler",
+    "_meta": {
+      "title": "基本调度器"
+    }
+  },
+  "744": {
+    "inputs": {
+      "noise_seed": 794114202485335
+    },
+    "class_type": "RandomNoise",
+    "_meta": {
+      "title": "随机噪波"
+    }
+  },
+  "747": {
+    "inputs": {
+      "width": 512,
+      "height": 1024,
+      "aspect_ratio": "custom",
+      "swap_dimensions": "Off",
+      "upscale_factor": 1,
+      "prescale_factor": 1,
+      "batch_size": 1
+    },
+    "class_type": "CR Aspect Ratio",
+    "_meta": {
+      "title": "🔳 CR Aspect Ratio"
+    }
+  },
+  "757": {
+    "inputs": {
+      "wildcard_text": "woman, with long dark brown hair, wearing a white baseball cap with black embroidered logo, light beige walls, wearing a light pink cardigan draped over her shoulders, subtle necklace visible around her neck, clean and modern background with no distractions, self-phone-photo, holding phone,<lora:FLUX/self/selfphone_lora-000009>",
+      "populated_text": "woman, with long dark brown hair, wearing a white baseball cap with black embroidered logo, light beige walls, wearing a light pink cardigan draped over her shoulders, subtle necklace visible around her neck, clean and modern background with no distractions, self-phone-photo, holding phone,<lora:FLUX/self/selfphone_lora-000009>",
+      "mode": "populate",
+      "Select to add LoRA": "Select the LoRA to add to the text",
+      "Select to add Wildcard": "Select the Wildcard to add to the text",
+      "seed": 622040077293382,
+      "model": [
+        "738",
+        0
+      ],
+      "clip": [
+        "737",
+        0
+      ]
+    },
+    "class_type": "ImpactWildcardEncode",
+    "_meta": {
+      "title": "ImpactWildcardEncode"
+    }
+  },
+  "790": {
+    "inputs": {
+      "filename_prefix": "AILab/image",
+      "images": [
+        "793",
+        0
+      ]
+    },
+    "class_type": "SaveImage",
+    "_meta": {
+      "title": "保存图像"
+    }
+  },
+  "793": {
+    "inputs": {
+      "samples": [
+        "740",
+        0
+      ],
+      "vae": [
+        "736",
+        0
+      ]
+    },
+    "class_type": "VAEDecode",
+    "_meta": {
+      "title": "VAE解码"
+    }
+  },
+  "797": {
+    "inputs": {
+      "guidance": 3.5,
+      "conditioning": [
+        "757",
+        2
+      ]
+    },
+    "class_type": "FluxGuidance",
+    "_meta": {
+      "title": "Flux引导"
+    }
+  },
+  "800": {
+    "inputs": {
+      "model": [
+        "757",
+        0
+      ],
+      "conditioning": [
+        "797",
+        0
+      ]
+    },
+    "class_type": "BasicGuider",
+    "_meta": {
+      "title": "基本引导器"
+    }
+  }
+},
+    "comfyui_nodes":[
+        "http://localhost:8000"
+    ],
+    "variables":{
+        "wildcard_text":{ 
+          "path":"757.inputs.wildcard_text",
+          "type":"string",
+          "default":"woman, with long dark brown hair, wearing a white baseball cap with black embroidered logo, light beige walls, wearing a light pink cardigan draped over her shoulders, subtle necklace visible around her neck, clean and modern background with no distractions, self-phone-photo, holding phone,<lora:FLUX/self/selfphone_lora-000009>"}
+    },
+    "token":"sk-23423546543w256hhj66"
+}

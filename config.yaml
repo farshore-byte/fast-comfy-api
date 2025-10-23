@@ -1,0 +1,16 @@
+server:
+  port: 6004
+
+s3:
+  endpoint: "127.0.0.1:9000"      # MinIO 服务地址（不带 https://）
+  bucket: "fast-comfy-api"        # 桶名
+  region: "us-east-1"             # MinIO 默认是 us-east-1，可不改
+  access_key: "minioadmin"        # 默认账号
+  secret_key: "minioadmin"        # 默认密码
+  use_ssl: false                  # 本地环境一般不启用 SSL
+  input_prefix: "input"           # 上传文件前缀
+  output_prefix: "output"         # 输出文件前缀
+
+hot_reload:
+  enabled: true                   # 是否启用热重载
+  interval: 10                    # 检查间隔（秒）
