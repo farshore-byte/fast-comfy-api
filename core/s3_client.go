@@ -11,6 +11,7 @@ import (
 	"strings"
 
 	"farshore.ai/fast-comfy-api/model"
+	"farshore.ai/fast-comfy-api/utils"
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
 )
@@ -122,6 +123,9 @@ func (s *S3Client) uploadWithPrefix(ctx context.Context, prefix, id, filePath st
 		ContentType: contentType,
 	})
 	if err != nil {
+		// ⚠️⚠️⚠️ 飞书报警S3上传失败
+		warnlog := fmt.Sprintf("⚠️ 上传文件失败: id: %s, filePath: %s, objectName: %s, err: %v", id, filePath, objectName, err)
+		utils.Feishu.InternalFeishuWarning("S3_upload_err", "", warnlog)
 		return "", fmt.Errorf("上传文件失败: %w", err)
 	}
 

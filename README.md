@@ -8,6 +8,7 @@
 - **热重载**: 支持配置文件热重载，修改 API 配置无需重启服务
 - **多 API 管理**: 支持同时管理多个 ComfyUI 工作流 API
 - **S3 存储**: 自动将生成结果上传到 S3 存储
+- **飞书报警**: 集成飞书机器人报警功能，实时监控系统状态
 - **贪婪策略**: api执行器将会选择当前队列最短的comfyui服务器发送任务
 - **自动随机种子**: 检测到seed字段，自动生成随机种子
 - **支持形式**: 支持音频、视频、图片形式生成，详细配置请参考示例API配置JSON 
@@ -50,8 +51,19 @@ hot_reload:
 
 📖 **详细配置说明**: 请参考 [API配置编写说明.md](./resource/apis/API配置编写说明.md)
 
+### 4. 配置飞书报警（可选）
 
-### 4. 启动服务
+在 `config.yaml` 中配置飞书机器人：
+
+```yaml
+feishu:
+  enabled: true                    # 启用飞书报警
+  webhook_url: "https://open.feishu.cn/open-apis/bot/v2/hook/your-webhook-token"
+  at_users: ["user_id1", "user_id2"]  # 需要@的用户ID列表
+```
+
+
+### 5. 启动服务
 
 ```bash
 go run main.go
@@ -99,6 +111,9 @@ curl --location --request POST 'http://localhost:6004/api/generate_sync' \
     }
   }'
 ```
+
+> **更新日志**: 
+- 2025年10月25日 - 飞书报警功能集成
 
 ## 🔧 API 配置说明
 

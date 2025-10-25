@@ -67,7 +67,7 @@
   }
 },
     "comfyui_nodes":[
-        "http://localhost:8000"
+        "http://localhost:8100"
     ],
     "variables":{
         "prompt":{ 

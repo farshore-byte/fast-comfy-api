@@ -1,4 +1,4 @@
-package core
+package config
 
 import (
 	"farshore.ai/fast-comfy-api/model"

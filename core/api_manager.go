@@ -15,6 +15,7 @@ import (
 	"time"
 
 	"farshore.ai/fast-comfy-api/model"
+	"farshore.ai/fast-comfy-api/utils"
 )
 
 // APIManager 管理多个api，绑定统一s3资源桶，并提供统一接口，通过token路由到指定api generate_sync()方法生成
@@ -462,11 +463,18 @@ func downloadFile(url string, prefix string) (string, error) {
 	log.Printf("⏬ 任务结束, 正在下载结果文件....")
 	resp, err := http.Get(url)
 	if err != nil {
+		// ⚠️⚠️⚠️ 从comfyui下载文件失败飞书报警
+		warnlog := fmt.Sprintf("下载结果文件失败: %s", err)
+		utils.Feishu.InternalFeishuWarning("result_download_err", url, warnlog)
+
 		return "", fmt.Errorf("下载请求失败: %w", err)
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
+		// ⚠️⚠️⚠️ 从comfyui下载文件失败飞书报警
+		warnlog := fmt.Sprintf("下载结果文件失败: %s", resp.Status)
+		utils.Feishu.InternalFeishuWarning("result_download_err", url, warnlog)
 		return "", fmt.Errorf("下载失败，状态码: %d", resp.StatusCode)
 	}
 

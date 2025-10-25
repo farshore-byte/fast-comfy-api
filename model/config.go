@@ -23,9 +23,15 @@ type HotReloadConfig struct {
 	Interval int  `yaml:"interval"` // 检查间隔（秒）
 }
 
+// FeishuConfig 定义飞书配置
+type FeishuConfig struct {
+	WebHook string `yaml:"webhook"` // 飞书 WebHook 地址
+}
+
 // Config 整体配置
 type Config struct {
 	S3        S3Config        `yaml:"s3"`
 	Server    ServerConfig    `yaml:"server"`
 	HotReload HotReloadConfig `yaml:"hot_reload"`
+	Feishu    FeishuConfig    `yaml:"feishu"`
 }

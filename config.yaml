@@ -14,3 +14,7 @@ s3:
 hot_reload:
   enabled: true                   # 是否启用热重载
   interval: 10                    # 检查间隔（秒）
+
+feishu:
+  webhook: ""
+

@@ -4,7 +4,10 @@ import (
 	"encoding/json"
 	"sync"
 
+	"farshore.ai/fast-comfy-api/config"
 	"farshore.ai/fast-comfy-api/model"
+	"farshore.ai/fast-comfy-api/utils"
+	"fmt"
 )
 
 // 定义接口
@@ -168,6 +171,10 @@ func (w *MessageWorker) handleMessage(msg ComfyUIMessage) {
 	case WS_RECONNECT_ATTEMPT:
 		w.handleWSReconnect()
 	case WS_RECONNECT_FAILED:
+		// 打印websocket连接失败日志
+		LogMessageWorker("WebSocket 连接失败: %s", string(msg.Data))
+		// ⚠️⚠️⚠️触发报警
+		utils.Feishu.InternalFeishuWarning("websocket_error", w.host, fmt.Sprintf(" %s WebSocket 连接失败", w.host))
 		w.handleWSExit()
 	case WS_CONNECTION_ERROR, WS_READ_ERROR, WS_PARSE_ERROR:
 		var data SystemData
@@ -312,7 +319,13 @@ func (w *MessageWorker) handleExecutionSuccess(data ExecutionData) {
 }
 
 func (w *MessageWorker) handleStatus(data StatusData) {
+	// 打印队列状态
 	LogMessageWorker("[Status] SID: %s 队列剩余: %v", data.SID, data.Status.ExecInfo.QueueRemaining)
+	// 判断队列是否要报警
+	if data.Status.ExecInfo.QueueRemaining >= config.WarningQueueSize {
+		warn_log := fmt.Sprintf(" %s 服务器队列数量: %d, 超过预设值: %d", w.host, int(data.Status.ExecInfo.QueueRemaining), config.WarningQueueSize)
+		utils.Feishu.InternalFeishuWarning("queue_warning", w.host, warn_log)
+	}
 }
 
 func (w *MessageWorker) handleWSConnected() {
@@ -332,6 +345,7 @@ func (w *MessageWorker) handleError(data SystemData) {
 }
 
 func (w *MessageWorker) handleMonitor(data MonitorData) {
+	// 打印监控日志
 	if len(data.GPUs) > 0 {
 		LogMessageWorker("[Monitor] 服务器: %s, CPU: %.1f%%, 内存: %.1f%% (%d/%d MB), GPU: %d°C, VRAM: %.1f%% (%d/%d MB)",
 			w.host,
@@ -350,6 +364,39 @@ func (w *MessageWorker) handleMonitor(data MonitorData) {
 			data.RAMUsedPercent,
 			data.RAMUsed/1024/1024,
 			data.RAMTotal/1024/1024)
+	}
+
+	// ⚠️ CPU 超阈值报警
+	if data.CPUUtilization > float64(config.WarningCPUPercent) {
+		warnLog := fmt.Sprintf("⚠️ %s CPU 利用率过高: %.1f%%, 超过预设阈值: %.1f%%",
+			w.host, data.CPUUtilization, config.WarningCPUPercent)
+		//utils.Feishu.SendFeishuMsgAsync(warnLog)
+		utils.Feishu.InternalFeishuWarning("cpu_warning", w.host, warnLog)
+
+	}
+
+	// ⚠️ 内存超阈值报警
+	if data.RAMUsedPercent > float64(config.WarningRAMPercent) {
+		warnLog := fmt.Sprintf("⚠️ %s 内存使用率过高: %.1f%%, 超过预设阈值: %.1f%%",
+			w.host, data.RAMUsedPercent, config.WarningRAMPercent)
+		//utils.Feishu.SendFeishuMsgAsync(warnLog)
+		utils.Feishu.InternalFeishuWarning("ram_warning", w.host, warnLog)
+	}
+
+	// ⚠️ GPU 超温或显存超阈值报警
+	for i, gpu := range data.GPUs {
+		if gpu.GPUTemperature > int(config.WarningGPUTemp) {
+			warnLog := fmt.Sprintf("⚠️ %s GPU[%d] 状态异常: 温度 %d°C (阈值 %d°C), 显存使用 %.1f%% (阈值 %.1f%%)",
+				w.host, i, gpu.GPUTemperature, config.WarningGPUTemp, gpu.VRAMUsedPercent, config.WarningVRAMPercent)
+			//utils.Feishu.SendFeishuMsgAsync(warnLog)
+			utils.Feishu.InternalFeishuWarning("gpu_temp_warning", fmt.Sprintf("%s_gpu%d", w.host, i), warnLog)
+		}
+		if gpu.VRAMUsedPercent > float64(config.WarningVRAMPercent) {
+			warnLog := fmt.Sprintf("⚠️ %s GPU%d VRAM 使用率过高: %.1f%%, 超过预设阈值: %.1f%%",
+				w.host, i, gpu.VRAMUsedPercent, config.WarningVRAMPercent)
+			//utils.Feishu.SendFeishuMsgAsync(warnLog)
+			utils.Feishu.InternalFeishuWarning("vram_warning", fmt.Sprintf("%s_gpu%d", w.host, i), warnLog)
+		}
 	}
 }
 

@@ -2,6 +2,9 @@ package core
 
 import (
 	"encoding/json"
+	"farshore.ai/fast-comfy-api/config"
+	"farshore.ai/fast-comfy-api/model"
+	"farshore.ai/fast-comfy-api/utils"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -9,8 +12,6 @@ import (
 	"strings"
 	"sync"
 	"time"
-
-	"farshore.ai/fast-comfy-api/model"
 )
 
 /*
@@ -239,6 +240,13 @@ func (api *APIRuntime) GetComfyuiServerQueue(host string) (int, error) {
 	}
 	// 获取队列数量
 	queue_remaining := data["exec_info"].(map[string]interface{})["queue_remaining"].(float64)
+	//log.Printf("[GetComfyuiServerQueue] 获取到任务，检测 %s 服务器队列数量: %d", host, int(queue_remaining))
+	// ⚠️⚠️⚠️⚠️⚠️  插入一个队列监控报警
+	if queue_remaining >= config.WarningQueueSize {
+		// 调用feishuclient 发送报警
+		warn_log := fmt.Sprintf(" %s 服务器队列数量: %d, 超过预设值: %d", host, int(queue_remaining), config.WarningQueueSize)
+		utils.Feishu.InternalFeishuWarning("queue_warning", host, warn_log)
+	}
 	return int(queue_remaining), nil
 }
 
