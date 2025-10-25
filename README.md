@@ -57,9 +57,7 @@ hot_reload:
 
 ```yaml
 feishu:
-  enabled: true                    # 启用飞书报警
-  webhook_url: "https://open.feishu.cn/open-apis/bot/v2/hook/your-webhook-token"
-  at_users: ["user_id1", "user_id2"]  # 需要@的用户ID列表
+  webhook: ""
 ```
 
 
@@ -112,8 +110,7 @@ curl --location --request POST 'http://localhost:6004/api/generate_sync' \
   }'
 ```
 
-> **更新日志**: 
-- 2025年10月25日 - 飞书报警功能集成
+
 
 ## 🔧 API 配置说明
 
@@ -306,3 +303,7 @@ MIT License
 ## 🤝 贡献
 
 欢迎提交 Issue 和 Pull Request！
+
+
+> **更新日志**: 
+- 2025年10月25日 - 飞书报警功能集成
